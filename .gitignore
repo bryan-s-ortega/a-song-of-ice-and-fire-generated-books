@@ -1,0 +1,11 @@
+__pycache__/
+chroma_db/
+extracted_books/
+dream_of_spring_generated/
+winds_of_winter_generated/
+reviews/
+dream_of_spring_generated_improved/
+winds_of_winter_generated_improved/
+summaries/
+winds_of_winter_outline.txt
+dream_of_spring_outline.txt
