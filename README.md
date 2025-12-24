@@ -14,7 +14,7 @@ This project utilizes advanced Large Language Models (LLMs) and Retrieval-Augmen
 
 ## 🛠️ Tech Stack & Decisions
 
-*   **Python 3.12+**: Core language for AI/ML development.
+*   **Python 3.13+**: Core language for AI/ML development.
 *   **Meta Llama 3 (8B Instruct)**: Chosen for its high reasoning capabilities and efficiency. It can run locally on consumer GPUs (e.g. RTX 3090/4090) when quantized, avoiding API costs and privacy concerns.
 *   **LangChain**: Used as the orchestration layer for the RAG pipeline.
     *   *Why?* It provides abstractions for easy text splitting (`RecursiveCharacterTextSplitter`) and seamless integration with ChromaDB and HuggingFace embeddings.
