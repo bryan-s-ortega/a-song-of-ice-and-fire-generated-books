@@ -13,7 +13,7 @@ def get_chapter_number(filename):
         return int(match.group(1))
     return 0
 
-def summarize_chapter(chapter_path, tokenizer, model):
+def summarize_chapter(chapter_path, tokenizer, model, title="The Winds of Winter"):
     """Reads a chapter and generates a summary."""
     with open(chapter_path, "r") as f:
         content = f.read()
@@ -28,7 +28,7 @@ def summarize_chapter(chapter_path, tokenizer, model):
     summary_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
 You are an expert literary summarizer.
-Your task is to write a concise plot summary for the following chapter of 'The Winds of Winter'.
+Your task is to write a concise plot summary for the following chapter of '{title}'.
 Focus on the key events, character actions, and plot progressions.
 Do not include analysis or review, just the story summary.
 
@@ -47,6 +47,7 @@ Write a summary of this chapter (approx 200-300 words).
 def main():
     parser = argparse.ArgumentParser(description="Summarize book chapters.")
     parser.add_argument("--book_dir", type=str, required=True, help="Directory containing the book chapters")
+    parser.add_argument("--title", type=str, default="The Winds of Winter", help="Book title")
     args = parser.parse_args()
 
     load_dotenv()
@@ -85,7 +86,7 @@ def main():
         chapter_num = get_chapter_number(os.path.basename(file_path))
         print(f"Processing Chapter {chapter_num}...")
         
-        summary = summarize_chapter(file_path, tokenizer, model)
+        summary = summarize_chapter(file_path, tokenizer, model, title=args.title)
         full_book_summary.append(f"## Chapter {chapter_num}\n\n{summary}")
         
         # Append immediately to file

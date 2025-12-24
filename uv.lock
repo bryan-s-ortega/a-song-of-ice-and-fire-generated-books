@@ -248,7 +248,7 @@ wheels = [
 ]
 
 [[package]]
-name = "book-completion"
+name = "book-writer"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

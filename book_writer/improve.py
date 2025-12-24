@@ -40,7 +40,7 @@ def parse_reviews(review_file):
         
     return reviews
 
-def improve_chapter(chapter_path, review_text, tokenizer, model):
+def improve_chapter(chapter_path, review_text, tokenizer, model, author="George R.R. Martin", title="The Winds of Winter"):
     """Reads a chapter, applies the review, and generates an improved version."""
     with open(chapter_path, "r") as f:
         content = f.read()
@@ -55,7 +55,7 @@ def improve_chapter(chapter_path, review_text, tokenizer, model):
     # Construct the improvement prompt
     improvement_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
-You are George R.R. Martin. You are rewriting a chapter for 'The Winds of Winter' based on editorial feedback.
+You are {author}. You are rewriting a chapter for '{title}' based on editorial feedback.
 Your goal is to IMPROVE the chapter while keeping the core plot points, unless the review specifically asks to change them.
 Enhance the prose, dialogue, and immersion.
 
@@ -82,6 +82,8 @@ def main():
     parser = argparse.ArgumentParser(description="Improve book chapters based on reviews.")
     parser.add_argument("--book_dir", type=str, required=True, help="Directory containing the original book chapters")
     parser.add_argument("--review_file", type=str, required=True, help="Path to the markdown review file")
+    parser.add_argument("--author", type=str, default="George R.R. Martin", help="Author name to emulate")
+    parser.add_argument("--title", type=str, default="The Winds of Winter", help="Book title")
     args = parser.parse_args()
 
     load_dotenv()
@@ -126,7 +128,7 @@ def main():
             continue
 
         print(f"Improving Chapter {chapter_num}...")
-        improved_content = improve_chapter(file_path, reviews[chapter_num], tokenizer, model)
+        improved_content = improve_chapter(file_path, reviews[chapter_num], tokenizer, model, author=args.author, title=args.title)
         
         output_path = os.path.join(output_dir, os.path.basename(file_path))
         with open(output_path, "w") as f:

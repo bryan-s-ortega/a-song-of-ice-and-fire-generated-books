@@ -13,7 +13,7 @@ def get_chapter_number(filename):
         return int(match.group(1))
     return 0
 
-def review_chapter(chapter_path, tokenizer, model):
+def review_chapter(chapter_path, tokenizer, model, series="A Song of Ice and Fire", title="The Winds of Winter"):
     """Reads a chapter and generates a review."""
     with open(chapter_path, "r") as f:
         content = f.read()
@@ -33,8 +33,8 @@ def review_chapter(chapter_path, tokenizer, model):
 
     review_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
-You are a senior editor and expert on 'A Song of Ice and Fire'.
-Your task is to review a newly written chapter for 'The Winds of Winter'.
+You are a senior editor and expert on '{series}'.
+Your task is to review a newly written chapter for '{title}'.
 Evaluate the chapter based on:
 1.  **Consistency**: Does it fit with previous books and character voices?
 2.  **Plot Logic**: Does the sequence of events make sense?
@@ -56,9 +56,10 @@ Here is the chapter text:
     review = generate_text(review_prompt, tokenizer, model, max_new_tokens=512)
     return review
 
-def main(book_dir : str):
+def main(args):
     load_dotenv()
     
+    book_dir = args.book_dir
     book_name = os.path.basename(os.path.normpath(book_dir))
     output_file = f"reviews/{book_name}_review.md"
     
@@ -85,7 +86,7 @@ def main(book_dir : str):
         chapter_num = get_chapter_number(os.path.basename(file_path))
         print(f"Reviewing Chapter {chapter_num}...")
         
-        review = review_chapter(file_path, tokenizer, model)
+        review = review_chapter(file_path, tokenizer, model, series=args.series, title=args.title)
         
         # Append to report immediately (so we have partial results if it crashes)
         with open(output_file, "a") as f:
@@ -99,6 +100,8 @@ def main(book_dir : str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Review generated book chapters.")
     parser.add_argument("--dir", dest="book_dir", type=str, required=True, help="Directory containing the book chapters")
+    parser.add_argument("--series", type=str, default="A Song of Ice and Fire", help="Series name for context")
+    parser.add_argument("--title", type=str, default="The Winds of Winter", help="Book title for context")
     args = parser.parse_args()
     
-    main(args.book_dir)
+    main(args)

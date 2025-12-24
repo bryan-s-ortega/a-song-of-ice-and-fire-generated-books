@@ -61,12 +61,21 @@ def generate_text(prompt, tokenizer, model, max_new_tokens=2000): # Increased to
     generated_text = tokenizer.decode(outputs[0][inputs.input_ids.shape[1]:], skip_special_tokens=True)
     return generated_text
 
+import argparse
+
 def main():
+    parser = argparse.ArgumentParser(description="Generate a book from an outline.")
+    parser.add_argument("--outline", type=str, default="outline.txt", help="Path to the outline file")
+    parser.add_argument("--output-dir", type=str, default="generated_book", help="Directory to save generated chapters")
+    parser.add_argument("--author", type=str, default="George R.R. Martin", help="Name of the author to emulate")
+    parser.add_argument("--title", type=str, default="The Winds of Winter", help="Title of the book being written")
+    args = parser.parse_args()
+
     load_dotenv()
     
     # 1. Check for Outline
-    if not os.path.exists("outline.txt"):
-        print("Error: 'outline.txt' not found. Please create one with chapter prompts.")
+    if not os.path.exists(args.outline):
+        print(f"Error: '{args.outline}' not found. Please create one with chapter prompts.")
         return
 
     # 2. Load Model
@@ -75,11 +84,11 @@ def main():
     print("Model loaded.")
 
     # 3. Create Output Directory
-    output_dir = "generated_book"
+    output_dir = args.output_dir
     os.makedirs(output_dir, exist_ok=True)
 
     # 4. Read Outline
-    with open("outline.txt", "r") as f:
+    with open(args.outline, "r") as f:
         chapters = [line.strip() for line in f if line.strip() and not line.strip().startswith(('*', '#'))]
 
     print(f"Found {len(chapters)} chapters to generate.")
@@ -99,7 +108,7 @@ def main():
         # prompt Construction (Includes Memory)
         full_prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
-You are George R.R. Martin. You are writing Chapter {chapter_num} of 'The Winds of Winter'.
+You are {args.author}. You are writing Chapter {chapter_num} of '{args.title}'.
 Write a long, detailed, and immersive chapter based on the user's prompt.
 Capture the gritty tone, complex dialogue, and sensory details of the series.
 
